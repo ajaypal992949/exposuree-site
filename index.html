@@ -17,7 +17,7 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- Firebase SDKs (Compatibility) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js"></script>
@@ -27,9 +27,8 @@
             --bg: #050505;
             --surface: #0d0d0d;
             --gold: #D4AF37;
-            --gold-light: #f3cf7a;
             --gold-gradient: linear-gradient(135deg, #996515 0%, #D4AF37 50%, #f3cf7a 100%);
-            --transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         /* --- Global Resets & Vercel Visibility Shield --- */
@@ -42,14 +41,14 @@
             position: relative;
         }
 
-        /* Critical Failsafe: If AOS script is slow, show content anyway */
-        body:not(.aos-initialized) [data-aos] {
-            opacity: 1 !important;
-            transform: none !important;
-            visibility: visible !important;
-        }
+        /* Critical: Ensure images are visible on Vercel */
+        img { display: block; max-width: 100%; height: auto; opacity: 1 !important; visibility: visible !important; }
 
-        /* --- Strict Layering (Liquid Gold Orbs) --- */
+        /* Failsafe: Content visibility if AOS script is delayed */
+        [data-aos] { opacity: 1 !important; transform: none !important; }
+        .aos-animate { opacity: 1 !important; }
+
+        /* --- Decoration Layer (tiiny/vercel fix) --- */
         .decoration-layer { position: fixed; inset: 0; pointer-events: none; z-index: -1; overflow: hidden; }
         .bg-grid {
             position: absolute; inset: 0;
@@ -57,14 +56,14 @@
             background-size: 80px 80px; mask-image: radial-gradient(circle at center, black, transparent 90%);
         }
         .orb {
-            position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.12;
-            background: var(--gold); animation: float 20s infinite ease-in-out;
+            position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.1;
+            background: var(--gold); animation: floatOrb 20s infinite ease-in-out;
         }
         .orb-1 { width: 400px; height: 400px; top: -10%; left: -10%; }
         .orb-2 { width: 500px; height: 500px; bottom: -10%; right: -10%; background: #996515; animation-delay: -5s; }
-        @keyframes float { 0%, 100% { transform: translate(0, 0); } 33% { transform: translate(30px, 50px); } 66% { transform: translate(-20px, -30px); } }
+        @keyframes floatOrb { 0%, 100% { transform: translate(0, 0); } 33% { transform: translate(30px, 50px); } 66% { transform: translate(-20px, -30px); } }
 
-        /* --- Header & Tab Logic --- */
+        /* --- Header & Fixed Navigation --- */
         header {
             position: fixed; top: 0; left: 0; width: 100%; 
             padding: 1.5rem 0; z-index: 5000;
@@ -78,33 +77,32 @@
         .logo { font-size: 1.1rem; font-weight: 800; letter-spacing: 2px; text-decoration: none; color: white; text-transform: uppercase; white-space: nowrap; }
         .gold-text { background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; display: inline-block; }
 
-        /* --- Premium Buttons (Correct Tab Style) --- */
+        /* --- Premium "Tab" Buttons --- */
         .btn {
             display: inline-flex; align-items: center; justify-content: center; 
-            padding: 1rem 2.2rem; border-radius: 100px;
+            padding: 1rem 2.2rem; border-radius: 9999px;
             font-weight: 800; text-decoration: none; text-transform: uppercase; letter-spacing: 2px;
             font-size: 0.75rem; transition: var(--transition); cursor: pointer; border: none;
             position: relative; overflow: hidden; width: fit-content; white-space: nowrap;
         }
-        .btn-primary { background: var(--gold-gradient); color: #000; box-shadow: 0 10px 25px rgba(153, 101, 21, 0.15); }
-        .btn-primary:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.35); }
+        .btn-primary { background: var(--gold-gradient); color: #000; box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2); }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(212, 175, 55, 0.4); }
         .btn-secondary { background: rgba(255, 255, 255, 0.03); color: #fff; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--gold); }
-
-        /* --- Sections Stacking --- */
+        
+        /* --- Sections Core --- */
         section { position: relative; z-index: 10; width: 100%; }
         .container { max-width: 1300px; margin: 0 auto; padding: 0 1.5rem; }
 
         /* Hero */
         .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 140px 0 80px; }
-        .hero h1 { font-size: clamp(2.5rem, 8.5vw, 6rem); line-height: 0.95; font-weight: 800; margin-bottom: 2rem; letter-spacing: -3px; }
+        .hero h1 { font-size: clamp(2.5rem, 8vw, 6rem); line-height: 0.95; font-weight: 800; margin-bottom: 2rem; letter-spacing: -3px; }
         .hero p { font-size: clamp(1.1rem, 4vw, 1.4rem); color: #A0A0A0; max-width: 750px; margin: 0 auto 4rem; }
-        .hero-cta { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+        .hero-cta { display: flex; flex-direction: column; gap: 1rem; align-items: center; width: 100%; }
 
-        /* Founder Section (Correct Alignment) */
+        /* Founder: Proper Button Positioning Fix --- */
         .founder { padding: 120px 0; background: #080808; }
         .founder-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 6rem; align-items: center; }
-        .founder-img { width: 100%; aspect-ratio: 4/5; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative; }
+        .founder-img { width: 100%; aspect-ratio: 4/5; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative; background: #111; }
         .founder-img img { width: 100%; height: 100%; object-fit: cover; }
         .experience-stamp {
             position: absolute; bottom: -25px; right: -25px; width: 150px; height: 150px; background: var(--gold-gradient);
@@ -113,55 +111,65 @@
             animation: rotateStamp 25s linear infinite; z-index: 5;
         }
         @keyframes rotateStamp { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
         .founder-text { text-align: left; display: flex; flex-direction: column; align-items: flex-start; gap: 1.5rem; }
         .founder-text h2 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; line-height: 1.05; letter-spacing: -2px; }
 
-        /* Investment / Pricing Card Effects */
-        .pricing { padding: 120px 0; }
-        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; margin-top: 5rem; }
-        .price-card { background: #0a0a0a; padding: 4.5rem 3rem; border-radius: 35px; border: 1px solid rgba(255,255,255,0.05); transition: var(--transition); height: 100%; display: flex; flex-direction: column; }
-        .price-card:hover { transform: translateY(-15px); border-color: var(--gold); background: #111; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
-        .price-card.featured { border-color: var(--gold); border-width: 2px; position: relative; }
-        .price-card.featured::before { content: "MOST POPULAR"; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--gold-gradient); color: #000; padding: 5px 15px; border-radius: 50px; font-size: 0.65rem; font-weight: 900; }
-        
-        .price-old { display: block; font-size: 1.1rem; text-decoration: line-through; opacity: 0.3; margin-bottom: 0.2rem; }
-        .price-main { display: block; font-size: 2.8rem; font-weight: 900; line-height: 1; }
-        .price-sub { display: block; font-size: 1.3rem; color: var(--gold); font-weight: 800; margin-top: 0.5rem; }
-        .feature-list { list-style: none; margin: 2.5rem 0; flex-grow: 1; }
-        .feature-item { display: flex; gap: 12px; margin-bottom: 0.9rem; color: #ccc; font-size: 0.95rem; align-items: flex-start; }
-        .feature-item i { color: var(--gold); width: 16px; margin-top: 4px; }
+        /* Services Grid */
+        .services { padding: 120px 0; }
+        .section-tag { color: var(--gold); text-align: center; display: block; letter-spacing: 8px; font-weight: 800; margin-bottom: 2rem; font-size: 0.85rem; text-transform: uppercase; }
+        .section-title { text-align: center; font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 8rem; font-weight: 800; letter-spacing: -2px; }
+        .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 3rem; }
+        .service-card { background: #0a0a0a; padding: 4rem 3rem; border-radius: 35px; border: 1px solid rgba(255,255,255,0.05); transition: var(--transition); height: 100%; }
+        .service-card:hover { transform: translateY(-10px); border-color: var(--gold); }
+        .service-icon { color: var(--gold); margin-bottom: 1.5rem; width: 35px; height: 35px; }
 
-        /* Portfolio (Sideways Moving Corrected) */
+        /* Investment / Pricing Fixes */
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 5rem; }
+        .price-card { background: #0a0a0a; padding: 3.5rem 2.5rem; border-radius: 35px; border: 1px solid rgba(255,255,255,0.05); transition: var(--transition); display: flex; flex-direction: column; justify-content: space-between; }
+        .price-card:hover { transform: translateY(-10px); border-color: var(--gold); }
+        .price-old { text-decoration: line-through; opacity: 0.3; font-size: 1rem; font-weight: 600; display: block; margin-bottom: 0.3rem; }
+        .price-main { font-size: 2.8rem; font-weight: 900; line-height: 1.1; display: block; }
+        .price-sub { color: var(--gold); font-weight: 800; font-size: 1.2rem; margin-top: 0.5rem; display: block; }
+        .feature-list { list-style: none; margin: 2rem 0; flex-grow: 1; }
+        .feature-item { display: flex; gap: 10px; margin-bottom: 0.8rem; font-size: 0.9rem; color: #ccc; align-items: flex-start; }
+        .feature-item i { color: var(--gold); width: 16px; margin-top: 4px; flex-shrink: 0; }
+
+        /* Portfolio Marquee Fix (Two Rows Sideways) */
         .portfolio { padding: 120px 0; background: #030303; overflow: hidden; }
-        .marquee-container { display: flex; flex-direction: column; gap: 3rem; margin-top: 6rem; }
-        .marquee-track { display: flex; width: max-content; gap: 2.5rem; }
-        .track-left { animation: scrollLeft 60s linear infinite; }
-        .track-right { animation: scrollRight 60s linear infinite; }
-        @keyframes scrollLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-        @keyframes scrollRight { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+        .marquee-container { display: flex; flex-direction: column; gap: 2.5rem; margin-top: 5rem; }
+        .marquee-track { display: flex; width: max-content; gap: 2rem; flex-wrap: nowrap; }
+        
+        .track-left { animation: moveLeftLoop 45s linear infinite; }
+        .track-right { animation: moveRightLoop 45s linear infinite; }
+        
+        @keyframes moveLeftLoop { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        @keyframes moveRightLoop { from { transform: translateX(-50%); } to { transform: translateX(0); } }
         
         .portfolio-item {
             width: 480px; height: 300px; border-radius: 24px; overflow: hidden;
             border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; background: #111;
-            filter: grayscale(0.4); transition: 0.6s var(--transition);
         }
-        .portfolio-item:hover { filter: grayscale(0); transform: scale(1.02); z-index: 10; border-color: var(--gold); }
-        .portfolio-item img { width: 100%; height: 100%; object-fit: cover; }
+        .portfolio-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: 0.4s; }
+        .portfolio-item:hover img { opacity: 1; transform: scale(1.03); }
 
         /* Modal */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.98); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; z-index: 9000; opacity: 0; visibility: hidden; transition: 0.4s; padding: 1.5rem; }
         .modal-overlay.active { opacity: 1; visibility: visible; }
-        .modal-content { background: #0a0a0a; width: 100%; max-width: 550px; border: 1px solid var(--gold); border-radius: 35px; padding: 4rem 2.5rem; position: relative; max-height: 95vh; overflow-y: auto; }
+        .modal-content { background: #0a0a0a; width: 100%; max-width: 550px; border: 1px solid var(--gold); border-radius: 35px; padding: 3rem 2rem; position: relative; max-height: 95vh; overflow-y: auto; }
         .modal-close { position: absolute; top: 25px; right: 25px; background: rgba(255,255,255,0.05); border: none; color: #fff; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .form-group { margin-bottom: 1.2rem; text-align: left; }
+        .form-label { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.6rem; color: var(--gold); font-weight: 800; }
+        .form-input, .form-select { width: 100%; background: #000; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1rem; color: white; font-size: 1rem; font-family: inherit; }
 
         @media (max-width: 1100px) { .pricing-grid { grid-template-columns: 1fr 1fr; } .pricing-grid > div:last-child { grid-column: span 2; } }
         @media (max-width: 991px) {
-            .founder-grid { grid-template-columns: 1fr; gap: 5rem; text-align: center; }
+            .nav-wrapper { padding: 0 1.5rem; }
+            .founder-grid { grid-template-columns: 1fr; gap: 4rem; text-align: center; }
             .founder-text { align-items: center; text-align: center; }
-            .hero h1 { font-size: 3.2rem; letter-spacing: -2px; }
+            .hero h1 { font-size: 3.2rem; }
             .pricing-grid { grid-template-columns: 1fr; }
             .pricing-grid > div:last-child { grid-column: span 1; }
-            .hero-cta { flex-direction: column; width: 100%; align-items: center; }
             .btn { width: 100%; max-width: 380px; }
             .portfolio-item { width: 320px; height: 210px; }
         }
@@ -169,7 +177,7 @@
 </head>
 <body>
 
-    <!-- Liquid Background System -->
+    <!-- Strict Static Deco -->
     <div class="decoration-layer">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
@@ -185,8 +193,8 @@
 
     <!-- Hero -->
     <section class="hero">
-        <div class="container" data-aos="zoom-out" data-aos-duration="1500">
-            <div style="display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--gold); color: var(--gold); padding: 0.6rem 1.4rem; border-radius: 100px; font-size: 0.7rem; font-weight: 800; margin-bottom: 2.5rem; text-transform: uppercase; letter-spacing: 2px; background: rgba(212, 175, 55, 0.08);">🏆 Elite Digital Architecture</div>
+        <div class="container">
+            <div style="display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--gold); color: var(--gold); padding: 0.5rem 1.2rem; border-radius: 100px; font-size: 0.7rem; font-weight: 800; margin-bottom: 2.5rem; text-transform: uppercase; background: rgba(212, 175, 55, 0.05);">🏆 Elite Digital Architecture</div>
             <h1>Your Business Deserves a Website That <br><span class="gold-text">Prints Clients</span></h1>
             <p>We craft premium, high-converting digital assets for modern brands using AI-driven engineering and elite design systems.</p>
             <div class="hero-cta">
@@ -196,12 +204,13 @@
         </div>
     </section>
 
-    <!-- Founder -->
+    <!-- Founder (Fixed Image & Proper Tab Alignment) -->
     <section class="founder">
         <div class="container">
             <div class="founder-grid">
                 <div class="founder-img" data-aos="fade-right">
-                    <img src="https://img.sanishtech.com/u/d46c6c821d367428062f14402e9b8000.jpg" alt="Azey - Founder">
+                    <!-- Image loading fix for Vercel -->
+                    <img src="https://img.sanishtech.com/u/d46c6c821d367428062f14402e9b8000.jpg" alt="Azey - Founder" referrerpolicy="no-referrer" loading="lazy">
                     <div class="experience-stamp">EST. 2014<br>10+ YEARS<br>EXPERIENCE</div>
                 </div>
                 <div class="founder-text" data-aos="fade-left">
@@ -221,17 +230,17 @@
             <h2 class="section-title">Defining the <span class="gold-text">New Standard</span></h2>
             <div class="service-grid">
                 <div class="service-card" data-aos="fade-up">
-                    <i data-lucide="sparkles" style="color: var(--gold); margin-bottom: 2rem; width: 40px; height: 40px;"></i>
+                    <i data-lucide="sparkles" class="service-icon"></i>
                     <h3>AI Website Design</h3>
                     <p>Harnessing machine learning algorithms to optimize UI/UX flows for maximum psychological conversion triggers.</p>
                 </div>
                 <div class="service-card" data-aos="fade-up" data-aos-delay="100">
-                    <i data-lucide="briefcase" style="color: var(--gold); margin-bottom: 2rem; width: 40px; height: 40px;"></i>
+                    <i data-lucide="briefcase" class="service-icon"></i>
                     <h3>Business Platforms</h3>
                     <p>Authority-building enterprise systems designed for global firms and high-ticket service professionals.</p>
                 </div>
                 <div class="service-card" data-aos="fade-up" data-aos-delay="200">
-                    <i data-lucide="target" style="color: var(--gold); margin-bottom: 2rem; width: 40px; height: 40px;"></i>
+                    <i data-lucide="target" class="service-icon"></i>
                     <h3>Sales Landing Pages</h3>
                     <p>Surgical conversion funnels engineered to transform cold traffic into qualified revenue.</p>
                 </div>
@@ -239,17 +248,17 @@
         </div>
     </section>
 
-    <!-- Investment -->
+    <!-- Investment / Pricing -->
     <section id="investment" class="pricing">
         <div class="container">
             <span class="section-tag">Scalable Growth</span>
             <h2 class="section-title" style="text-align: center;">The <span class="gold-text">Investment</span></h2>
             <div class="pricing-grid">
+                <!-- Launch -->
                 <div class="price-card" data-aos="fade-up">
                     <div>
-                        <div style="font-size: 2.5rem; margin-bottom: 1.5rem;">🚀</div>
-                        <h3 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 1.2rem;">Launch</h3>
-                        <div class="price-amount">
+                        <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1.2rem;">Launch</h3>
+                        <div style="margin-bottom: 1.5rem;">
                             <span class="price-old">$1,000 Upfront</span>
                             <span class="price-main">$0 Upfront</span>
                             <span class="price-sub">$97/month</span>
@@ -263,12 +272,11 @@
                     </div>
                     <button class="btn btn-primary open-modal">Get Free Preview</button>
                 </div>
-
+                <!-- Scale -->
                 <div class="price-card featured" data-aos="fade-up" data-aos-delay="100">
                     <div>
-                        <div style="font-size: 2.5rem; margin-bottom: 1.5rem;">📈</div>
-                        <h3 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 1.2rem;">Scale</h3>
-                        <div class="price-amount">
+                        <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1.2rem;">Scale</h3>
+                        <div style="margin-bottom: 1.5rem;">
                             <span class="price-old">$1,500 Upfront</span>
                             <span class="price-main">$0 Upfront</span>
                             <span class="price-sub">$149/month</span>
@@ -277,34 +285,21 @@
                             <li class="feature-item"><i data-lucide="check-circle"></i>Advanced AI Trained Chatbot</li>
                             <li class="feature-item"><i data-lucide="check-circle"></i>AI Review & Booking Bot</li>
                             <li class="feature-item"><i data-lucide="check-circle"></i>CRM & Tracking Setup</li>
-                            <li class="feature-item"><i data-lucide="check-circle"></i>Priority Support & Growth Reports</li>
                         </ul>
                     </div>
                     <button class="btn btn-primary open-modal">Book Strategy Call</button>
                 </div>
-
+                <!-- Dominance -->
                 <div class="price-card" data-aos="fade-up" data-aos-delay="200">
                     <div>
-                        <div style="font-size: 2.5rem; margin-bottom: 1.5rem;">👑</div>
-                        <h3 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 1.2rem;">Dominance</h3>
-                        <div class="price-amount">
-                            <span class="price-main" style="font-size: 2.1rem;">Custom Solution</span>
+                        <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1.2rem;">Dominance</h3>
+                        <div style="margin-bottom: 1.5rem;">
+                            <span class="price-main" style="font-size: 2rem;">Custom Solution</span>
                             <span class="price-sub">Enterprise Agreement</span>
                         </div>
                         <ul class="feature-list">
                             <li class="feature-item"><i data-lucide="check-circle"></i>Custom UI/UX Premium Design</li>
                             <li class="feature-item"><i data-lucide="check-circle"></i>AI Voice & Calling Bot</li>
-                            <li class="feature-item"><i data-lucide="check-circle"></i>Advanced Workflow Automations</li>
-                            <li class="feature-item"><i data-lucide="check-circle"></i>Dedicated account manager</li>
+                            <li class="feature-item"><i data-lucide="check-circle"></i>Advanced Automations</li>
                         </ul>
                     </div>
-                    <button class="btn btn-primary open-modal">Request Proposal</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Portfolio Marquee -->
-    <section id="portfolio" class="portfolio">
-        <div class="container" style="text-align: center;">
-            <span
